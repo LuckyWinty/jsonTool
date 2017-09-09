@@ -206,6 +206,7 @@
  	$('#js_mod_addData_btn').on('click',function(){
  		var dataObj = [];
  		evalToJson($('.atom_data_group'),dataObj);
+ 		$('.result').html(JSON.stringify(dataObj));
  		console.log('>>><<<',dataObj);
  	});
  	$(document).on('change','.dataType',function(){ 
@@ -413,5 +414,4 @@
  		}
  	});
  }
-
 })()
