@@ -1,0 +1,490 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+   <title> ppms助手 </title>
+  <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+</head>
+<body>
+
+<style type="text/css">
+	.containe{
+		padding-top:30px;
+		width: 600px;
+	}
+</style>
+<div class = "containe " style="float:left;width:30%;" >
+</ul> -->
+<ul class="list-group">
+</ul>
+<br>
+<pre>
+如果数据模板结构已建立,点击生成按钮！繁琐的数据模板和页面片模板就会帮你生成！
+</pre>
+&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-default" id="generateAll" >提交</button>
+</div>
+<div style="width:20%; height:646px; border:solid black 1px; float:left;margin-top:30px; margin-left:10px;" >
+<form class="form-horizontal" role="form"  style="margin-top:10px;">
+   <div class="form-group">
+      <label for="name" class="col-sm-2 control-label">name</label>
+      <div class="col-sm-10" style="width:200px">
+         <input type="text" class="form-control" id="name" 
+            placeholder="Please input name. ">
+      </div>
+   </div>
+   <div class="form-group">
+      <label for="nick" class="col-sm-2 control-label">nick</label>
+      <div class="col-sm-10" style="width:200px">
+         <input type="text" class="form-control" id="nick" 
+            placeholder="Please input nick.">
+      </div>
+   </div>
+   <div class="form-group">
+   <label for="firstnme" class="col-sm-2 control-label">type</label>
+      <select class="form-control " style="width:200px">
+         <option value="0">text</option>
+         <option value="1">url</option>
+         <option value="2">img</option>
+         <option value="3">select</option>
+         <option value="4">checkbox</option>
+         <option value="5">level</option>
+         <option value="6">date</option>
+         <option value="7">textarea</option>
+         <option value="8">radio</option>
+      </select>
+   </div>
+    <div class="form-group " id="textareaDiv" style="display: none">
+    <label for="fd" class="col-sm-2 control-label">name<br>+<br>value</label>
+    <textarea id="keyvalue" class="form-control" rows="3" style="width:200px" placeholder="例子：湖南+1+广东+2+安徽+3"></textarea>
+  </div>
+   
+  <!--  <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+         <p class="btn btn-default" id="addList">增加</p>
+      </div>
+   </div> -->
+</form>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-default" id="addList" >增加第一条数据</button>
+<br>
+<br>
+
+<pre>
+  如何使用:
+  1、添加第一条：填写数据，点击‘增加第一条数据’按钮,则添加第一条数据成功。
+  2、填写将要建立的数据模板的每一项,如上图;
+  3、点击右侧的增加邻居或者增加孩子
+  4、循环操作2和3步骤
+  5、如果添加错了也可以移除任意条
+
+</pre>
+</div>
+<div style="width:20%;  border:solid black 1px; float:left;margin-top:30px; margin-left:10px;" >
+  <p>生成的数据模板</p>
+  
+   <textarea id="tplone" class="form-control" rows="30"  placeholder=""></textarea>
+   
+</div>
+<div style="width:25%;  border:solid black 1px; float:left;margin-top:30px; margin-left:10px;" >
+  <p>生成的页面片模板</p>
+  
+   <textarea id="tpltwo" class="form-control" rows="30"  placeholder=""></textarea>
+   
+</div>
+
+<script type="text/javascript">
+  var nameDom = $("#name"),
+      nickDom = $("#nick"),
+      typeVal = "text",
+      keyValueDom = $("#keyvalue");
+  var $ul = $(".containe > ul");
+  var $parent = $ul;   
+  $(".form-control ").on("click" , function(){
+      var $option = $(this).find("option");
+      $option.each(function(index,dom){
+        if(dom.selected == true){
+          typeVal = dom.text;
+          if(typeVal == "select" || typeVal == "checkbox" || typeVal == "radio"){
+            $("#textareaDiv").show();
+          }else{
+            $("#textareaDiv").hide();
+          }
+        }
+      });
+  }); 
+  
+
+  
+  $(".containe").on("click" , ".addNext" , function(){
+    $parent = $(this).parent();
+    var nameVal = nameDom.val(),
+        nickVal = nickDom.val(),
+        keyValueVal = keyValueDom.val();
+    if(typeVal == "text" || typeVal == "img" || typeVal == "url" || typeVal == "date" || typeVal == "textarea" ){
+       if(!nameVal || !nickVal ){alert("请确保每个项目都填写了再提交！"); return;}
+      var dom = '<li class="list-group-item" data-name="'+nameVal+'" data-nick="'+nickVal+'" data-type="'+typeVal+'">'+nameVal+'<span class="badge addNext">增加邻居</span><span class="badge deleteCur">删除</span></li>';
+      var $dom = $(dom);
+      $parent.after($dom);
+    }
+    if(typeVal == "checkbox" || typeVal == "select" || typeVal == "radio" ){
+      if(!nameVal || !nickVal || !keyValueVal){alert("请确保每个项目都填写了再提交！"); return;}
+      
+      var dom = '<li class="list-group-item" data-name="'+nameVal+'" data-nick="'+nickVal+'" data-value="'+keyValueVal+'" data-type="'+typeVal+'">'+nameVal+'<span class="badge addNext">增加邻居</span><span class="badge deleteCur">删除</span></li>';
+      var $dom = $(dom);
+      $parent.after($dom);
+    }
+    if(typeVal == "level"){
+      if(!nameVal || !nickVal ){alert("请确保每个项目都填写了再提交！"); return;}
+      //<li class="list-group-item" data-name="品牌配置" data-nick="brandInfo" data-type="level">品牌配置 <span class="badge">增加邻居</span>
+      var dom = '<li class="list-group-item" data-name="'+nameVal+'" data-nick="'+nickVal+'" data-type="'+typeVal+'">'+nameVal+'<span class="badge addNext">增加邻居</span><span class="badge addChild">增加孩子</span><span class="badge deleteCur">删除</span><ul></ul></li>';
+      var $dom = $(dom);
+      $parent.after($dom);
+    }
+    
+  });
+  $(".containe").on("click" , ".addChild" , function(e){
+    $parent = $($(e.target).parent()[0].children).eq(3);
+    var nameVal = nameDom.val(),
+        nickVal = nickDom.val(),
+        keyValueVal = keyValueDom.val();
+    if(typeVal == "text" || typeVal == "img" || typeVal == "url" || typeVal == "date" || typeVal == "textarea"){
+       if(!nameVal || !nickVal ){alert("请确保每个项目都填写了再提交！"); return;}
+      var dom = '<li class="list-group-item" data-name="'+nameVal+'" data-nick="'+nickVal+'" data-type="'+typeVal+'">'+nameVal+'<span class="badge addNext">增加邻居</span><span class="badge deleteCur">删除</span></li>';
+      var $dom = $(dom);
+      $parent.append($dom);
+    }
+    if(typeVal == "checkbox" || typeVal == "select" || typeVal == "radio"){
+      if(!nameVal || !nickVal || !keyValueVal){alert("请确保每个项目都填写了再提交！"); return;}
+      
+      var dom = '<li class="list-group-item" data-name="'+nameVal+'" data-nick="'+nickVal+'" data-value="'+keyValueVal+'" data-type="'+typeVal+'">'+nameVal+'<span class="badge addNext">增加邻居</span><span class="badge deleteCur">删除</span></li>';
+      var $dom = $(dom);
+      $parent.append($dom);
+    }
+    if(typeVal == "level"){
+      if(!nameVal || !nickVal ){alert("请确保每个项目都填写了再提交！"); return;}
+      //<li class="list-group-item" data-name="品牌配置" data-nick="brandInfo" data-type="level">品牌配置 <span class="badge">增加邻居</span>
+      var dom = '<li class="list-group-item" data-name="'+nameVal+'" data-nick="'+nickVal+'" data-type="'+typeVal+'">'+nameVal+'<span class="badge addNext">增加邻居</span><span class="badge addChild">增加孩子</span><span class="badge deleteCur">删除</span><ul></ul></li>';
+      var $dom = $(dom);
+      $parent.append($dom);
+    }
+    
+  });
+ $(".containe").on("click" , ".deleteCur" , function(){
+    $(this).parent().remove();
+    if($(".addNext").length==0){
+      $("#addList").show();
+    }
+  });
+  $("#addList").on("click" , function(dom){
+    var nameVal = nameDom.val(),
+        nickVal = nickDom.val(),
+        keyValueVal = keyValueDom.val();
+    var dom  = "";    
+    if(typeVal == "text" || typeVal == "img" || typeVal == "url" || typeVal == "date" || typeVal == "textarea"){
+       if(!nameVal || !nickVal ){alert("请确保每个项目都填写了再提交！"); return;}
+       dom = '<li class="list-group-item" data-name="'+nameVal+'" data-nick="'+nickVal+'" data-type="'+typeVal+'">'+nameVal+'<span class="badge addNext">增加邻居</span><span class="badge deleteCur">删除</span></li>';
+  
+    }
+    if(typeVal == "checkbox" || typeVal == "select" || typeVal == "radio"){
+      if(!nameVal || !nickVal || !keyValueVal){alert("请确保每个项目都填写了再提交！"); return;}
+      
+      dom = '<li class="list-group-item" data-name="'+nameVal+'" data-nick="'+nickVal+'" data-value="'+keyValueVal+'" data-type="'+typeVal+'">'+nameVal+'<span class="badge addNext">增加邻居</span><span class="badge deleteCur">删除</span></li>';
+      
+    }
+    if(typeVal == "level"){
+      if(!nameVal || !nickVal ){alert("请确保每个项目都填写了再提交！"); return;}
+      //<li class="list-group-item" data-name="品牌配置" data-nick="brandInfo" data-type="level">品牌配置 <span class="badge">增加邻居</span>
+       dom = '<li class="list-group-item" data-name="'+nameVal+'" data-nick="'+nickVal+'" data-type="'+typeVal+'">'+nameVal+'<span class="badge addNext">增加邻居</span><span class="badge addChild">增加孩子</span><span class="badge deleteCur">删除</span><ul></ul></li>';
+      
+    }
+    var $dom = $(dom);
+    $parent.append($dom);
+    $(this).hide();
+  });
+
+  
+  //一键生成
+  $("#generateAll").on("click" , function(){
+    generateA();
+  });
+
+  function generateA(){
+
+
+   var arrs = [];
+   var fatherDom = $(".list-group > li");
+   fatherDom.each(function(index , dom){
+      var typeT = dom.dataset.type;
+        //if(typeT!="level"){
+      var obj = {};
+      obj.name = dom.dataset.name;
+      obj.nick = dom.dataset.nick;
+      obj.type = dom.dataset.type;
+      if(typeT=="checkbox" || typeT=="select" || typeT == "radio"){
+         obj.data = dom.dataset.value;
+      }
+      if(typeT=="level" ){
+         var myDom =  dom.children[dom.children.length-1].children;
+         var myArr = $(myDom);
+         obj.dataFormat = getLevelArr(myArr)
+         
+      }
+      arrs.push(obj);
+    //}
+});
+
+function getLevelArr(dom){
+   var myArr = [];
+   dom.each(function(index , dom){
+    var typeT = dom.dataset.type;
+        //if(typeT!="level"){
+            var obj = {};
+            obj.name = dom.dataset.name;
+            obj.nick = dom.dataset.nick;
+            obj.type = dom.dataset.type;
+         if(typeT=="checkbox" || typeT=="select" || typeT == "radio"){
+            obj.data = dom.dataset.value;
+         }
+        
+         if(typeT=="level" ){
+            //debugger;
+           obj.dataFormat =  getMoreLevel($(dom));
+            
+         }
+        myArr.push(obj);
+    //}
+});
+return myArr
+}
+
+//其实下面就是递归了
+function getMoreLevel(dom){
+   var moreArrs = [];
+   
+   dom = dom.children().eq(dom.children().length-1).find("li");
+   dom.each(function(index , dom){
+      var typeT = dom.dataset.type;
+        //if(typeT!="level"){
+      var obj = {};
+      obj.name = dom.dataset.name;
+      obj.nick = dom.dataset.nick;
+      obj.type = dom.dataset.type;
+      if(typeT=="checkbox" || typeT=="select" || typeT == "radio"){
+         obj.data = dom.dataset.value;
+      }
+      if(typeT=="level" ){ //由于目前只打算做成三层的 所以暂时就不做以下的了   如果做成更多层次的，可以考虑递归
+         // var myDom =  dom.children[dom.children1].children;
+         // var myArr = $(myDom);
+         // obj.dataFormat = getLevelArr(myArr)
+         // debugger; 
+      }
+      moreArrs.push(obj);
+    //}
+});
+   return moreArrs;
+}
+
+// //以下主要是实现三层情况的  数据结构
+function parseCheckBoxToStr(arr){
+   var str = "";
+   var checkArr = arr.split("+");
+   var len = checkArr.length/2;
+   checkArr.forEach(function(dom, index){
+      if(index<len-1 ){
+         str  =str+ '{ "name":"'+checkArr[index*2]+'","value":"'+checkArr[index*2+1]+'"},\n';
+      }else if(index==len-1 ){
+          str  =str+ '{ "name":"'+checkArr[index*2]+'","value":"'+checkArr[index*2+1]+'"}\n';
+      }
+   });
+   return str;
+}
+function parseArrayObjToPageTpl(arrObj){  //递归太强大
+    var len = arrObj.length-1,
+        strTpl = "";
+    arrObj.forEach(function(dom, index){
+        if(index==len){
+         if(dom.type == "checkbox" || dom.type == "select" || dom.type == "radio"){
+            strTpl = strTpl + "{" +'"name":"'+dom.name+'" ,"nick":"'+dom.nick + '","type":"' + dom.type +
+                  '","data":[\n'+   parseCheckBoxToStr(dom.data) + ' ]}\n';
+         }else if(dom.type == "level"){
+            strTpl = strTpl + "{" +'"name":"'+dom.name+'" ,"nick":"'+dom.nick + '","type":"' + dom.type +
+                  '","dataFormat":[\n'+   parseArrayObjToPageTpl(dom.dataFormat) + ' ]}\n';
+         }else{
+            strTpl = strTpl + "{" +'"name":"'+dom.name+'" ,"nick":"'+dom.nick + '","type":"' + dom.type +'" }\n';
+         }
+            
+        }else{
+            if(dom.type == "checkbox" || dom.type == "select" || dom.type == "radio"){
+            strTpl = strTpl + "{" +'"name":"'+dom.name+'" ,"nick":"'+dom.nick + '","type":"' + dom.type +
+                  '","data":[\n'+   parseCheckBoxToStr(dom.data) + ' ]},\n';
+         }else if(dom.type == "level"){
+            strTpl = strTpl + "{" +'"name":"'+dom.name+'" ,"nick":"'+dom.nick + '","type":"' + dom.type +
+                  '","dataFormat":[\n'+   parseArrayObjToPageTpl(dom.dataFormat) + ' ]},\n';
+         }else{
+            strTpl = strTpl + "{" +'"name":"'+dom.name+'" ,"nick":"'+dom.nick + '","type":"' + dom.type +'" },\n';
+         }
+        }
+
+    });
+    return strTpl;  
+};
+console.log(parseArrayObjToPageTpl(arrs));
+$("#tplone").html(parseArrayObjToPageTpl(arrs));
+// //将dataformat中的数组生成字符串 type=level的情况
+// /*
+//  {"name": "奖品名", "nick": "pname","type": "text"},
+//  {"name": "奖品id", "nick": "id", "type": "text"}
+
+//  需要传入的是数组
+// */
+// // function generateTypeLevel1(arrObj){
+// //    var len = arrObj.length-1,
+// //         strTpl = "";
+// //     arrObj.forEach(function(dom, index){
+// //         if(index==len){
+// //          if(dom.type == "checkbox" || dom.type == "select" ){
+// //             strTpl = strTpl + "{" +'"name":"'+dom.name+'" ,"nick":"'+dom.nick + '","type":"' + dom.type +
+// //                   '","data":[\n'+   parseCheckBoxToStr(dom.data) + '" ]}\n';
+// //          }else if(dom.type == "level"){
+// //             strTpl = strTpl + "{" +'"name":"'+dom.name+'" ,"nick":"'+dom.nick + '","type":"' + dom.type +
+// //                   '","dataFormat":[\n'+   generateTypeLevel1(dom.dataFormat) + ' ]}\n';
+// //          }else{
+// //             strTpl = strTpl + "{" +'"name":"'+dom.name+'" ,"nick":"'+dom.nick + '","type":"' + dom.type +'" }\n';
+// //          }
+            
+// //         }else{
+// //             if(dom.type == "checkbox" || dom.type == "select"){
+// //             strTpl = strTpl + "{" +'"name":"'+dom.name+'" ,"nick":"'+dom.nick + '","type":"' + dom.type +
+// //                   '","data":[\n'+   parseCheckBoxToStr(dom.data) + ' ]},\n';
+// //          }else if(dom.type == "level"){
+// //             strTpl = strTpl + "{" +'"name":"'+dom.name+'" ,"nick":"'+dom.nick + '","type":"' + dom.type +
+// //                   '","dataFormat":[\n'+   generateTypeLevel1(dom.dataFormat) + ' ]},\n';
+// //          }else{
+// //             strTpl = strTpl + "{" +'"name":"'+dom.name+'" ,"nick":"'+dom.nick + '","type":"' + dom.type +'" },\n';
+// //          }
+// //         }
+
+// //     });
+// //     return strTpl;  
+// // }
+
+//生成了数组结构了，然后就可以生成html了
+var myTpl = [];
+var flag = false;
+var flagthree = false;
+    var myHtml = "var yourObjName = [\n";
+    myHtml = myHtml + "<%datas.forEach(function(obj0, index0){%>\n"+
+       "{\n";
+    arrs.forEach(function(dom , index ){
+        var len = arrs.length;
+      /* 这些考虑的都没有包含*/
+      if(index<len-1){
+            
+         if(dom.type == "level"){ //1、先简单的生成个最简单的形式，不含内容
+            flag = true;
+            myHtml = myHtml + '"'+dom.nick + '":['
+            myHtml = myHtml + "<%obj0."+dom.nick+".forEach(function(objTwo, idxTwo){%>\n";
+                myHtml = myHtml + generateObjStr(dom.dataFormat)+"\n";
+                if(flagthree){myHtml =  myHtml + "}"}
+            myHtml = myHtml + "<%if(idxTwo != obj0."+dom.nick+".length-1){%>, <%}})%>\n";
+            myHtml = myHtml + "],\n";
+         }else{
+            myHtml = myHtml + '"'+dom.nick +'" : ' + '"<%=obj0.'+dom.nick+'%>",\n';
+         }
+        }else{
+             
+         if(dom.type == "level"){ //1、先简单的生成个最简单的形式，不含内容
+            flag = true;
+            myHtml = myHtml + '"'+dom.nick + '":['
+            myHtml = myHtml + "<%obj0."+dom.nick+".forEach(function(objTwo, idxTwo){%>\n";
+            myHtml = myHtml + generateObjStr(dom.dataFormat)+"\n";
+            if(flagthree){myHtml =  myHtml + "}"}
+            myHtml = myHtml + "<%if(idxTwo != obj0."+dom.nick+".length-1){%>, <%}})%>\n";
+            myHtml = myHtml + "]\n";
+         }else{
+            myHtml = myHtml + '"'+dom.nick +'" : ' + '"<%=obj0.'+dom.nick+'%>"\n}';
+         }
+        }
+      /* */
+        
+    });
+    if(flag){myHtml =  myHtml + "}"}
+    myHtml =  myHtml+"<%if(index0 != datas.length-1){%>,<%}\n"+
+        "})%>" ;
+    myHtml = myHtml + "\n\n]";
+   console.log(myHtml);
+   $("#tpltwo").html(myHtml);
+
+ //{ a:"" }的生成 
+ function generateObjStr(objArr){
+    var myHtml2 = "{\n";
+    objArr.forEach(function(dom , index ){
+        var len = objArr.length;
+        //目前考虑的是level 中不包含level了
+        // if(index<len-1){
+        //     myHtml2 = myHtml2 + dom.nick +" : " + '"<%=obj0.'+dom.nick+'%>",\n'; 
+        // }else{
+        //     myHtml2 = myHtml2 + dom.nick +" : " + '"<%=obj0.'+dom.nick+'%>"\n'; 
+        // }
+        //加入level中又包含了level
+        if(index<len-1){
+            if(dom.type != "level"){
+                myHtml2 = myHtml2 + '"'+dom.nick +'" : ' + '"<%=objTwo.'+dom.nick+'%>",\n'; 
+            }else{
+                myHtml2 = myHtml2 + '"'+dom.nick + '":['
+                myHtml2 = myHtml2 + "<%objTwo."+dom.nick+".forEach(function(objThree, idxThree){%>\n";
+                myHtml2 = myHtml2 + generateObjStr2(dom.dataFormat)+"\n";
+                myHtml2 = myHtml2 + "<%if(idxThree != objTwo."+dom.nick+".length-1){%>, <%}})%>\n";
+                myHtml2 = myHtml2 + "],\n";
+            }
+            
+        }else{
+            if(dom.type != "level"){
+                myHtml2 = myHtml2 + '"'+dom.nick +'" : ' + '"<%=objTwo.'+dom.nick+'%>"\n}'; 
+            }else{
+                myHtml2 = myHtml2 + '"'+dom.nick + '":['
+                myHtml2 = myHtml2 + "<%objTwo."+dom.nick+".forEach(function(objThree, idxThree){%>\n";
+                myHtml2 = myHtml2 + generateObjStr2(dom.dataFormat)+"\n";
+                myHtml2 = myHtml2 + "<%if(idxThree != objTwo."+dom.nick+".length-1){%>, <%}})%>\n";
+                myHtml2 = myHtml2 + "]\n";
+            } 
+        }
+   });
+
+   return myHtml2 ;
+ }
+ //做个备份
+ function generateObjStr2(objArr){
+     flagthree = true;
+     var myHtml2 = "{\n";
+     objArr.forEach(function(dom , index ){
+        var len = objArr.length;
+        if(index<len-1){
+            if(dom.type != "level"){
+                myHtml2 = myHtml2 + '"'+dom.nick +'" : ' + '"<%=objThree.'+dom.nick+'%>",\n'; 
+            }else{
+                
+            }
+            
+        }else{
+            if(dom.type != "level"){
+                myHtml2 = myHtml2 + '"'+dom.nick +'" : ' + '"<%=objThree.'+dom.nick+'%>"\n}'; 
+            }else{
+                
+            } 
+        }
+    });
+    return myHtml2 ;
+ }
+
+} //生成函数结尾
+
+</script>
+
+
+</body>
+</html>
